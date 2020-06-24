@@ -1,0 +1,240 @@
+/*
+Cynthia Cho
+Assignment 2
+Due 10/3/2017
+*/
+
+/****** Problem 1 ******/
+
+/*** 1.1 ***/
+create table PerformanceTypes(
+PerformanceTypeName varchar2(25),
+primary key(PerformanceTypeName));
+
+create table Performers(
+PerformerID number(6),
+FirstName varchar2(25),
+LastName varchar2 (25),
+Address varchar2 (50),
+PerformanceTypeName varchar2(25),
+primary key (PerformerID),
+foreign key (PerformanceTypeName) references PerformanceTypes(PerformanceTypeName));
+
+create table Arenas(
+ArenaID number(6),
+ArenaName varchar2(25),
+City varchar2(25),
+Capacity number(6),
+primary key (ArenaID));
+
+create table Concerts(
+PerformerID number(6),
+ArenaID number(6),
+ConcertDate date,
+primary key (ConcertDate),
+foreign key (PerformerID) references Performers(PerformerID),
+foreign key (ArenaID) references Arenas(ArenaID));
+
+
+/*** 1.2 ***/
+INSERT INTO  PerformanceTypes (PerformanceTypeName) VALUES('Singer');
+INSERT INTO  PerformanceTypes (PerformanceTypeName) VALUES('Dancer');
+INSERT INTO  PerformanceTypes (PerformanceTypeName) VALUES('Comedian');
+
+select * from PerformanceTypes;  /*check to see PerformanceTypes Table */
+
+/*** 1.3 ***/
+ALTER TABLE Performers ADD DateofBirth date;
+describe Performers;  /*check to see Performers Table */
+
+/*** 1.4 ***/
+INSERT INTO  Performers (PerformerID, FirstName, LastName, Address, PerformanceTypeName)
+VALUES(1, 'John', 'Dow', 'Annapolis MD', 'Singer');
+
+select * from Performers; /*checking above INSERT of PerformerID 1*/
+
+/*** 1.5 ***/
+INSERT INTO  Performers(PerformerID, FirstName, LastName, Address, PerformanceTypeName)
+VALUES(5, 'Cindy', 'Cho', 'Chicago IL', 'Painter');
+
+/*** 1.6 ***/
+INSERT INTO  Performers (PerformerID, FirstName, LastName, Address, PerformanceTypeName)
+VALUES(2, 'Matt', 'Smith', 'Baltimore MD', 'Dancer');
+INSERT INTO  Performers (PerformerID, FirstName, LastName, Address, PerformanceTypeName)
+VALUES(3, 'Jane', 'Brown', 'New York NY', 'Dancer');
+INSERT INTO  Performers (PerformerID, FirstName, LastName, Address, PerformanceTypeName)
+VALUES(4, 'Jennifer', 'Shade', 'Seattle WA','Dancer');
+
+/*** 1.7 ***/
+update Performers set DateofBirth = date '1990-03-02'
+where PerformerID = 1;
+
+/*** 1.8 ***/
+Delete from Performers where PerformerID = 1;
+select * from Performers;
+
+/*** 1.9 ***/
+UPDATE PerformanceTypes
+WHERE PerformanceTypeName = 'Singer';
+
+/*** 1.11 ***/
+update PerformanceTypes set PerformanceTypeName = 'Dance Performer'
+where PerformanceTypeName = 'Dancer';
+
+/*** 1.13 ***/
+INSERT INTO  Arenas (ArenaID) VALUES(1);
+INSERT INTO  Arenas (ArenaID) VALUES(2);
+INSERT INTO  Arenas (ArenaID) VALUES(3);
+select * from Arenas;
+
+/*** 1.14 ***/
+INSERT INTO  Concerts (PerformerID, ArenaID, ConcertDate) VALUES(1, 1, date '2017-01-20');
+INSERT INTO  Concerts (PerformerID, ArenaID, ConcertDate) VALUES(3, 1, date '2017-04-20');
+INSERT INTO  Concerts (PerformerID, ArenaID, ConcertDate) VALUES(3, 2, date '2017-05-20');
+INSERT INTO  Concerts (PerformerID, ArenaID, ConcertDate) VALUES(4, 2, date '2017-06-20');
+select * from Concerts;
+
+/*** 1.15 ***/
+update ARENAS
+set capacity = 50000
+where ArenaID = 1;
+
+update ARENAS
+set capacity = 50000
+where ArenaID = 2;
+
+select * from Arenas; /* checking Arenas table for updates. */
+
+
+/*** 1.16 ***/
+create table Dancers(
+PerformerID number(6),
+FirstName varchar2(25),
+LastName varchar2 (25),
+Address varchar2 (50),
+PerformanceTypeName varchar2(25),
+primary key (PerformerID),
+foreign key (PerformanceTypeName) references PerformanceTypes(PerformanceTypeName));
+
+
+/*** 1.17 ***/
+INSERT INTO  Dancers (PerformerID, FirstName, LastName, Address, PerformanceTypeName)
+VALUES(2, 'Matt', 'Smith', 'Baltimore MD', 'Dancer');
+INSERT INTO  Dancers (PerformerID, FirstName, LastName, Address, PerformanceTypeName)
+VALUES(3, 'Jane', 'Brown', 'New York NY', 'Dancer');
+INSERT INTO  Dancers (PerformerID, FirstName, LastName, Address, PerformanceTypeName)
+VALUES(4, 'Jennifer', 'Shade', 'Seattle WA','Dancer');
+
+
+
+/********** Problem 2 *****************/
+
+/****** We assume that column names that fuction as a primary key/foreign key can have both numbers and characters, which 
+if why varchar2 is used and not just numbers. ******/
+create table Customer(
+customername varchar2(25),
+email varchar2(50),
+phone number(10),
+totalpurchase number(8),
+primary key (email));
+
+create table Video(
+VID varchar2(10),
+videoname varchar2(25),
+videoyear number(4),
+videocost number(3),
+genre varchar2(25),
+primary key (vid));
+
+create table Actor(
+AID varchar2(10),
+actorname varchar2(50),
+dob number(8),
+primary key (AID));
+
+create table Price(
+pricecode varchar2(10),
+pricecost number(3),
+primary key (pricecode));
+
+create table Rents(
+email varchar2(50),
+VID varchar2(10),
+pricecode varchar2(10),
+rentalFee number(2),
+lateFee number(3),
+rentaldate date,
+duedate date,
+returndate date,
+primary key (email, Vid),
+foreign key (email) references Customer(email),
+foreign key (vid) references Video(vid),
+foreign key (pricecode) references Price(pricecode));
+
+create table Performs(
+VID varchar2(10),
+AID varchar2(10),
+primary key (vid, aid),
+foreign key (aid) references Actor(aid),
+foreign key (vid) references Video(vid));
+
+
+/*********** Problem 3 ***************/
+
+Drop table animal;
+
+CREATE TABLE Animal(
+AID NUMBER(3, 0),
+AName VARCHAR2(30) NOT NULL,
+ACategory VARCHAR2(18),
+TimeToFeed NUMBER(4,2),  
+CONSTRAINT Animal_PK PRIMARY KEY(AID));
+
+INSERT INTO Animal VALUES(1, 'Galapagos Penguin', 'exotic', 0.5);
+INSERT INTO Animal VALUES(2, 'Emperor Penguin', 'rare', 0.75);
+INSERT INTO Animal VALUES(3, 'Sri Lankan sloth bear', 'exotic', 2.5);
+INSERT INTO Animal VALUES(4, 'Grizzly bear', 'common', 3.0);
+INSERT INTO Animal VALUES(5, 'Giant Panda bear', 'exotic', 1.5);
+INSERT INTO Animal VALUES(6, 'Florida black bear', 'rare', 1.75);
+INSERT INTO Animal VALUES(7, 'Siberian tiger', 'rare', 3.5);
+INSERT INTO Animal VALUES(8, 'Bengal tiger', 'common', 2.75);
+INSERT INTO Animal VALUES(9, 'South China tiger', 'exotic', 2.25);
+INSERT INTO Animal VALUES(10, 'Alpaca', 'common', 0.25);
+INSERT INTO Animal VALUES(11, 'Llama', NULL, 3.5);
+
+select * from animal;
+
+
+/* 3.1 */
+
+select aname 
+from animal
+where timetofeed < 1.5;
+
+select * from animal;
+
+/*** 3.2 ***/
+select aname, acategory, timetofeed
+from animal
+where acategory = 'rare' order by timetofeed asc;
+
+/*** 3.3 ***/
+select aname, acategory
+from animal
+where aname like '%bear';
+
+/*** 3.4 ***/
+select aname
+from animal
+where acategory is null;
+
+/*** 3.5 ***/
+select aname, acategory, timetofeed 
+from animal
+where timetofeed between 1 and 2.5;
+
+/*** 3.6 ***/
+select aname, acategory
+from animal
+where aname like '%tiger%'and not acategory = 'common';
+

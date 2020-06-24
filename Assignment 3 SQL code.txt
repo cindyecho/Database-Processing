@@ -1,0 +1,265 @@
+/* PROBLEM 1 */
+
+import sqlite3
+conn = sqlite3.connect('assignment3.db')
+c = conn.cursor()
+conn.execute ('''create table Books
+(ISBN int not null,
+NAME text,
+PRICE real,
+NUMBEROFCOPIES int)''')
+
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9781449319793, 'Python for Data Analysis', 37.00, 2000)");
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9780073523323, 'Database System Concepts', 133.00, 700)");
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9780439708180, 'Harry Potter and the Sorcerers Stone', 10.00, 6000)");
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9780385121675, 'The Shining', 32.00, 3500)");
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9780385541176, 'The Rooster Bar', 17.00, 164)");
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9780385504201, 'The Da Vinci Code', 13.00, 8000)");
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9780399593482, 'The Midnight Line: A Jack Reacher Novel', 18.00, 500)");
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9780156027328, 'Life of Pi', 10.00, 6903)");
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9780439023481, 'The Hunger Games', 12.00, 73000)");
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (9780062024022, 'Divergent', 12.00, 44507)");
+
+conn.commit()
+c.execute('SELECT * FROM BOOKS')
+for row in c.execute('SELECT * FROM BOOKS ORDER BY ISBN'):print(row)
+print(c.fetchall()) ##Alternative way of printing##
+
+
+conn.execute("INSERT INTO Books (ISBN, NAME, PRICE, NUMBEROFCOPIES) \
+      VALUES (97875465248, 'Programming with Python', 100.00, 50)");
+
+
+conn.execute("UPDATE Books set Price = 60.00, NUMBEROFCOPIES=100 where ISBN = 97875465248");
+conn.commit()
+
+conn.execute("DELETE FROM Books where NUMBEROFCOPIES=100");
+
+for row in c.execute('SELECT * FROM BOOKS'):print(row)
+
+c.execute('SELECT sum(NUMBEROFCOPIES), avg(PRICE) FROM BOOKS')
+print(c.fetchone())
+
+
+
+/* PROBLEM 2 */
+
+drop table Person cascade constraints;
+drop table Building cascade constraints;
+drop table Room cascade constraints;
+drop table Meeting cascade constraints;
+drop table Person_Meeting cascade constraints;
+
+CREATE TABLE Person
+( Person_ID varchar2(5),
+first_name varchar2(25),
+last_name varchar2(25),
+check(first_name is not null),
+check(last_name is not null),
+primary key (Person_ID));
+
+CREATE TABLE Building
+( Building_ID number(3) PRIMARY KEY,
+Building_name varchar2(25) not null);
+
+CREATE TABLE Room
+( Room_ID number(5),
+Room_Number int not null,
+Building_ID number(3) not null,
+Capacity number(5) not null,
+PRIMARY KEY (Room_ID),
+foreign key (Building_ID) references Building(Building_ID));
+
+CREATE TABLE Meeting
+( Meeting_ID number(10), 
+Room_ID number(5), 
+meeting_start TIMESTAMP(0) not null, 
+meeting_end TIMESTAMP(0) not null,
+Primary Key (Meeting_ID),
+foreign key (room_ID) references Room(Room_ID));
+
+CREATE TABLE Person_Meeting
+( Person_ID varchar2(5),
+Meeting_ID number(10),
+Primary key (Person_ID,Meeting_ID),
+Foreign key (Person_ID) references Person(Person_ID),
+Foreign Key (Meeting_ID) references Meeting(Meeting_ID));
+
+
+
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (1, 'Tom', 'Hanks');
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (2, 'Anne ', 'Hathaway');
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (3, 'Tom', 'Cruise');
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (4, 'Meryl', 'Streep');
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (5, 'Chris', 'Pratt');
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (6, 'Halle', 'Berry');
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (7, 'Robert', 'De Niro');
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (8, 'Julia', 'Roberts');
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (9, 'Denzel', 'Washington');
+INSERT INTO Person (Person_ID, First_Name, Last_Name) values (10, 'Melissa', 'McCarthy');
+select * from Person;
+
+
+INSERT INTO Building (Building_ID, Building_Name) values (1, 'Headquarters');
+INSERT INTO Building (Building_ID, Building_Name) values (2, 'Main Street Building');
+Select * from Building;
+
+
+INSERT INTO Room (room_ID, room_Number, Building_ID, Capacity) values (1, 100, 1, 5);
+INSERT INTO Room (room_ID, room_Number, Building_ID, Capacity) values (2, 200, 1, 4);
+INSERT INTO Room (room_ID, room_Number, Building_ID, Capacity) values (4, 300, 1, 10);
+INSERT INTO Room (room_ID, room_Number, Building_ID, Capacity) values (5, 10, 2, 4);
+INSERT INTO Room (room_ID, room_Number, Building_ID, Capacity) values (6, 20, 2, 4);
+select * from room;
+
+INSERT INTO Meeting values (1, 1, TIMESTAMP '2016-12-25 09:00:00', TIMESTAMP '2016-12-25 10:00:00');
+INSERT INTO Meeting values (2, 1, TIMESTAMP '2016-12-25 10:00:00', TIMESTAMP '2016-12-25 12:00:00');
+INSERT INTO Meeting values (3, 1, TIMESTAMP '2016-12-25 11:00:00', TIMESTAMP '2016-12-25 12:00:00');
+INSERT INTO Meeting values (4, 2, TIMESTAMP '2016-12-25 09:00:00', TIMESTAMP '2016-12-25 10:00:00');
+INSERT INTO Meeting values (5, 4, TIMESTAMP '2016-12-25 09:00:00', TIMESTAMP '2016-12-25 10:00:00');
+INSERT INTO Meeting values (6, 5, TIMESTAMP '2016-12-25 14:00:00', TIMESTAMP '2016-12-25 16:00:00');
+select * from Meeting;
+
+
+
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('1', 1 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('10' ,1 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('1' ,2 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('2' ,2 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('3' , 2);
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('4' , 2);
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('5' , 2);
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('6' ,2 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('7' , 2);
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('8' , 2);
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('9' ,3 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('10' ,3 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('1' ,4 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('2' ,4 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('8' ,6 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('9' ,5 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('1' ,6 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('2' ,6 );
+INSERT INTO Person_Meeting (Person_ID, Meeting_ID) values ('3' ,6 );
+select * from Person_Meeting;
+
+
+select * from Building;
+Select * from Person;
+Select * from Meeting;
+Select * from Person_meeting;
+Select * from Room;
+
+
+/* 12.11 */ 
+
+
+select PM.Person_ID, PM.Meeting_ID, P.first_name, P.last_name
+from Person_Meeting PM inner join Person P
+on PM.Person_ID = P.Person_ID
+where p.first_name = 'Tom' and p.Last_name = 'Hanks';
+
+/* Aternative using Where clause
+select *
+from Person_Meeting
+where Person_ID = (select Person_ID
+from Person
+where first_name = 'Tom' and Last_name = 'Hanks');  */
+
+
+/* 12.12 */
+
+Select PM.Person_ID, P.first_name, P.last_name
+from Person_Meeting PM inner join Person P
+on PM.Person_ID = P.Person_ID
+where PM.Meeting_ID = 2;
+
+/* Aternative using nested queries
+Select * from person
+where Person_ID in (select Person_ID
+from Person_Meeting
+where Meeting_ID = 2);  */
+
+
+
+/* 12.13 */
+
+Select P.Person_ID, P.first_name, P.last_name, PM.Meeting_ID
+from Person P inner join Person_Meeting PM 
+on P.Person_ID = PM.Person_ID 
+inner join Meeting M
+on PM.meeting_ID=M.meeting_ID
+inner join Room R
+on M.room_ID = R.Room_ID
+inner join Building B              
+on R.building_ID = B.building_ID
+where Building_Name = 'Main Street Building';
+
+
+/* ALternative Way 1*/
+Select P.Person_ID, P.first_name, P.last_name, PM.Meeting_ID
+from Person P inner join Person_Meeting PM 
+on P.Person_ID = PM.Person_ID 
+where Meeting_ID in (Select M.meeting_ID
+                    from Meeting m INNER JOIN room R
+                    on M.room_ID = R.Room_ID
+                    where R.Room_ID in (select R.Room_ID
+                                        from Room R inner join Building B
+                                        on R.building_ID = B.building_ID
+                                        where Building_Name = 'Main Street Building'))
+order by Person_ID;
+
+
+/* ALternative Way 2*/
+Select Person_ID, first_name, last_name
+from Person
+where Person_ID in (Select Person_ID
+                    from Person_Meeting
+                    where Meeting_ID in (Select meeting_ID
+                                        from Meeting
+                                        where Room_ID in 
+                                        (select Room_ID
+                                        from Room
+                                        where Building_ID = (Select Building_ID
+                                                            from Building
+                                                            where Building_Name = 'Main Street Building'))));
+
+
+/* 12.14 */
+
+select Meeting_ID, count(Person_ID)
+from Person_Meeting
+group by Meeting_ID  /* Groups Meeting_ID and then counts the number of people (out of the 19) attending each meeting */
+order by Meeting_ID;  /* Orders in ASCENDING order by Meeting_ID */
+
+
+/* 12.15 */
+
+select distinct P.Person_ID, P.First_name, P.Last_Name
+from Person P inner join Person_Meeting PM
+on P.Person_ID=PM.Person_ID
+inner join Meeting M
+on M.Meeting_ID=PM.Meeting_ID
+where M.Meeting_end < TimeSTAMP '2016-12-25 12:00:00';
+
+/* ALternative Way*/
+select Person_ID, First_name, Last_Name
+from Person
+where Person_ID in
+              (select Person_ID
+              from Meeting inner join Person_Meeting
+              on Meeting.Meeting_ID = Person_Meeting.Meeting_ID
+              where Meeting.Meeting_end < TimeSTAMP '2016-12-25 12:00:00');
+	
+
+

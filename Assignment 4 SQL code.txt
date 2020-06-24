@@ -1,0 +1,161 @@
+
+/** PROBLEM 1 **/
+
+
+insert into Person (Person_ID, First_name, Last_name) values (7, 'Cynthia', 'Cho');
+
+
+Alter table Person add Sport varchar2(25);
+
+update Person
+set Sport = 'swimmer'
+where Person_ID in (1,2);
+update Person
+set Sport = 'sprinter'
+where Person_ID in (3,4);
+update Person
+set Sport = 'softball'
+where Person_ID in (7);
+
+
+delete Person
+where Last_name = 'Taurasi';
+
+select * from Person;
+
+Alter table Contact_List add Favorite varchar2(25);
+
+update Contact_List
+set Favorite = 'Y'
+where contact_ID = 1;
+
+update Contact_List
+set Favorite = 'N'
+where contact_ID <> 1;
+
+select * from Contact_List;
+
+
+
+
+insert into Contact_list values (15, 7, 2, 'N');
+
+insert into Contact_list values (16, 7, 3, 'N');
+
+insert into Contact_list values (17, 7, 1, 'Y');
+
+
+
+
+create table Image
+(image_ID varchar2(5), 
+image_name varchar2(25), 
+image_location varchar2(25),
+primary key (image_ID));
+
+
+create table Message_Image
+(image_ID varchar2(5),
+message_ID number,
+primary key (image_ID, message_ID));
+
+
+insert into Image values ('100', 'Bridge', 'San Francisco');
+insert into Image values ('200', 'Beach', 'Waikiki');
+insert into Image values ('300', 'Moutain', 'Vail');
+insert into Image values ('400', 'Park', 'New York City');
+insert into Image values ('500', 'Home', 'Seattle');
+
+
+Insert into Message_Image values ('100', 1);
+Insert into Message_Image values ('200', 2);
+Insert into Message_Image values ('300', 3);
+Insert into Message_Image values ('400', 4);
+Insert into Message_Image values ('500', 5);
+	
+
+
+select S.first_name "sender first name", S.Last_Name "sender last name", 
+R.first_name "receiver first name", R.Last_Name "receiver last name", M.Message, M.send_datetime
+from Message M inner join Person R
+on R.Person_ID=M.Receiver_ID
+inner join Person S
+on S.Person_ID=M.Sender_ID
+where S.first_name = 'Michael' and S.last_name='Phelps';
+
+
+/* Alternative Method
+select P.first_name, P.Last_Name, M.Message, M.send_datetime
+from Person P inner join Message M
+on P.Person_ID=M.Receiver_ID
+where sender_ID in(select M.sender_ID
+		from Person P inner join Message M
+		on P.Person_ID=M.Sender_ID
+		where first_name = 'Michael' and last_name='Phelps');
+*/
+
+select count(M.Sender_ID) "Message Count", M.Sender_ID, P.first_Name, P.Last_Name
+from Message M inner join Person P
+on P.Person_ID=M.Sender_ID
+group by M.Sender_ID, P.First_Name, P.Last_Name, M.Sender_ID;
+
+
+select M.Message_ID, M.Message, M.Send_datetime, I.Image_Name, I.Image_Location
+from Message M inner join Message_Image MI
+on M.Message_ID=MI.Message_ID
+inner join Image I
+on I.Image_ID=MI.Image_ID;
+
+/*****************************************************************************************/
+
+
+/** PROBLEM 2 **/
+
+
+/** PROBLEM 2.1 **/
+select sup.fname "supervisor first name", sup.lname "supervisor last name", emp.fname "employee first name", emp.lname "employee last name"
+from employee sup inner join employee emp
+on sup.SSN=emp.Super_SSN
+where sup.fname='Franklin' and sup.Minit='T' and sup.Lname='Wong';
+
+
+/** PROBLEM 2.2 **/
+
+select P.pname, P.pnumber, sum(hours)
+from Project P inner join Works_on W
+on P.pnumber=W.pno
+group by P.pname, P.pnumber
+order by P.pnumber;
+
+
+/** PROBLEM 2.3 **/
+select D.Dnumber "Department #", D.dname "Department Name", avg(salary) "Average Salary"
+from Department D inner join Employee E
+on D.Dnumber=E.DNO
+group by D.Dnumber, D.Dname
+order by D.Dnumber;
+
+
+/** PROBLEM 2.4 **/
+select Sex "Gender", avg(salary) "Average Salary for Women"
+from Employee
+group by Sex
+having sex='F';
+
+
+/** PROBLEM 2.5 **/
+select D.Dnumber "Department #", D.dname "Department Name", avg(salary) "Average Salary", count(SSN) "# of People"
+from Department D inner join Employee E
+on D.Dnumber=E.DNO
+group by D.Dnumber, D.Dname
+having avg(salary)>44000
+order by D.Dnumber;
+
+
+
+/** PROBLEM 2.6 **/
+
+select fname, minit, lname, salary
+from employee
+where Salary > (select max(Salary)-23000
+                              from employee);
